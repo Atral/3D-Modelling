@@ -72,7 +72,8 @@ public class Room_GLEventListener implements GLEventListener {
   private Mat4 perspective;
   private Model floor, cube;
   private Light light;
-  private SGNode twoBranchRoot;
+  private SGNode roomRoot;
+  private SGNode deskRoot;
   
   private void initialise(GL3 gl) {
     createRandomNumbers();
@@ -80,7 +81,7 @@ public class Room_GLEventListener implements GLEventListener {
     int[] textureId1 = TextureLibrary.loadTexture(gl, "textures/Stylized_Wall_001_BaseColor.jpg");
     int[] textureId2 = TextureLibrary.loadTexture(gl, "textures/container2.jpg");
     int[] textureId3 = TextureLibrary.loadTexture(gl, "textures/container2_specular.jpg");
-    int[] textureID4 = TextureLibrary.loadTexture(gl, );
+    int[] textureID4 = TextureLibrary.loadTexture(gl, "textures/Wood_021_basecolor.jpg");
     
     light = new Light(gl);
     light.setCamera(camera);
@@ -97,15 +98,17 @@ public class Room_GLEventListener implements GLEventListener {
     modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
     cube = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1);
 
-    desk = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID4);
+    Model desk = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID4);
     
-    twoBranchRoot = new NameNode("two-branch structure");
+    roomRoot = new NameNode("room structure");
     
     NameNode floorNode = new NameNode("floor");
+    Mat4 m = Mat4Transform.scale(16, 1f, 16);
+    TransformNode floorTransform = new TransformNode("scale(16, 1f, 16)", m);
     ModelNode floorShape = new ModelNode("Floor(0)", floor);
 
     NameNode leftWall = new NameNode("left wall");
-    Mat4 m = Mat4Transform.scale(0.5f,16,16);
+    m = Mat4Transform.scale(0.5f, 16, 16);
     m = Mat4.multiply(m, Mat4Transform.translate(-16,0.5f,0));
     TransformNode leftWallTransform = new TransformNode("scale(0.5, 16, 16); translate(-16,0.5,0)", m);
     ModelNode leftWallShape = new ModelNode("Cube(0)", cube);
@@ -115,12 +118,10 @@ public class Room_GLEventListener implements GLEventListener {
     m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,-16));
     TransformNode backWallTransform = new TransformNode("scale(1.4f,3.9f,1.4f); translate(0,0.5,0)", m);
     ModelNode backWallShape = new ModelNode("Cube(1)", cube);
-
-    NameNode deskBLLeg = new NameNode("Desk back left leg");
-    
         
-    twoBranchRoot.addChild(floorNode);
-      floorNode.addChild(floorShape);
+    roomRoot.addChild(floorNode);
+      floorNode.addChild(floorTransform);
+        floorTransform.addChild(floorShape);
 
       floorNode.addChild(leftWall);
         leftWall.addChild(leftWallTransform);
@@ -129,18 +130,82 @@ public class Room_GLEventListener implements GLEventListener {
       floorNode.addChild(backWall);
         backWall.addChild(backWallTransform);
           backWallTransform.addChild(backWallShape);
-    twoBranchRoot.update();  // IMPORTANT – must be done every time any part of the scene graph changes
+
+    roomRoot.update();  // IMPORTANT – must be done every time any part of the scene graph changes
     // Following two lines can be used to check scene graph construction is correct
     //twoBranchRoot.print(0, false);
     //System.exit(0);
+    float legHeight = 3;
+    float legSide = 0.4f;
+    float legXSpacing = 14;
+    float legZSpacing = 7;
+
+    deskRoot = new NameNode("desk structure");
+    //m = Mat4Transform.translate(0, 0, -9);
+    //TransformNode deskTransform = new TransformNode("translate(0, 0, -16)", m);
+
+    NameNode deskBLLeg = new NameNode("Desk back left leg");
+    m = Mat4Transform.scale(legSide, legHeight, legSide);
+    m = Mat4.multiply(m, Mat4Transform.translate(-legXSpacing, 0.5f, 0));
+    TransformNode deskBLLegTransform = new TransformNode("scale(0.4f, 3, 0.4f); translate(-15.6f, 0.5f, -16f)", m);
+    ModelNode deskBLLegShape = new ModelNode("Desk(0)", desk);
+
+    NameNode deskBRLeg = new NameNode("Desk back right leg");
+    m = Mat4Transform.scale(legSide, legHeight, legSide);
+    m = Mat4.multiply(m, Mat4Transform.translate(legXSpacing, 0.5f, 0));
+    TransformNode deskBRLegTransform = new TransformNode("scale(0.4f, 3, 0.4f); translate(0, 0.5f, -16f)", m);
+    ModelNode deskBRLegShape = new ModelNode("Desk(1)", desk);
+
+    NameNode deskFLLeg = new NameNode("Desk front left leg");
+    m = Mat4Transform.scale(legSide, legHeight, legSide);
+    m = Mat4.multiply(m, Mat4Transform.translate(-legXSpacing, 0.5f, legZSpacing));
+    TransformNode deskFLLegTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
+    ModelNode deskFLLegShape = new ModelNode("Desk(2)", desk);
+
+    NameNode deskFRLeg = new NameNode("Desk front right leg");
+    m = Mat4Transform.scale(legSide, legHeight, legSide);
+    m = Mat4.multiply(m, Mat4Transform.translate(legXSpacing, 0.5f, legZSpacing));
+    TransformNode deskFRLegTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
+    ModelNode deskFRLegShape = new ModelNode("Desk(3)", desk);
+
+    NameNode deskTop = new NameNode("Desk top surface");
+    m = Mat4Transform.scale((legXSpacing/legSide), 0.2f, legZSpacing);
+    m = Mat4.multiply(m, Mat4Transform.translate(0, (legHeight + 0.2f + 0.5f)*4, 0));
+    TransformNode deskTopTransform = new TransformNode("scale(24, 0.2f, 7); translate(0, 0.5f, 0)", m);
+    ModelNode deskTopShape = new ModelNode("Desk(4)", desk);
+    
+    //deskRoot.addChild(deskTransform);
+
+    deskRoot.addChild(deskBLLeg);
+      deskBLLeg.addChild(deskBLLegTransform);
+        deskBLLegTransform.addChild(deskBLLegShape);
+
+    deskRoot.addChild(deskBRLeg);
+      deskBRLeg.addChild(deskBRLegTransform);
+        deskBRLegTransform.addChild(deskBRLegShape);
+
+    deskRoot.addChild(deskFLLeg);
+      deskFLLeg.addChild(deskFLLegTransform);
+        deskFLLegTransform.addChild(deskFLLegShape);
+
+    deskRoot.addChild(deskFRLeg);
+      deskFRLeg.addChild(deskFRLegTransform);
+        deskFRLegTransform.addChild(deskFRLegShape);
+
+    deskRoot.addChild(deskTop);
+      deskTop.addChild(deskTopTransform);
+        deskTopTransform.addChild(deskTopShape);
+
+    deskRoot.update();
+    //deskRoot.print(0, false);
   }
  
   private void render(GL3 gl) {
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
     light.setPosition(getLightPosition());  // changing light position each frame
     light.render(gl);
-    floor.render(gl);
-    twoBranchRoot.draw(gl);
+    roomRoot.draw(gl);
+    deskRoot.draw(gl);
   }
   
   // The light's position is continually being changed, so needs to be calculated for each frame.
