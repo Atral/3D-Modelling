@@ -141,8 +141,8 @@ public class Room_GLEventListener implements GLEventListener {
     float legZSpacing = 7;
 
     deskRoot = new NameNode("desk structure");
-    //m = Mat4Transform.translate(0, 0, -9);
-    //TransformNode deskTransform = new TransformNode("translate(0, 0, -16)", m);
+    m = Mat4Transform.translate(0, 0, -5);
+    TransformNode deskTransform = new TransformNode("translate(0, 0, -16)", m);
 
     NameNode deskBLLeg = new NameNode("Desk back left leg");
     m = Mat4Transform.scale(legSide, legHeight, legSide);
@@ -169,12 +169,12 @@ public class Room_GLEventListener implements GLEventListener {
     ModelNode deskFRLegShape = new ModelNode("Desk(3)", desk);
 
     NameNode deskTop = new NameNode("Desk top surface");
-    m = Mat4Transform.scale((legXSpacing/legSide), 0.2f, legZSpacing);
-    m = Mat4.multiply(m, Mat4Transform.translate(0, (legHeight + 0.2f + 0.5f)*4, 0));
+    m = Mat4Transform.scale(11.6f, 0.2f, 4);
+    m = Mat4.multiply(m, Mat4Transform.translate(0, 2*7.7f, 0.35f));
     TransformNode deskTopTransform = new TransformNode("scale(24, 0.2f, 7); translate(0, 0.5f, 0)", m);
     ModelNode deskTopShape = new ModelNode("Desk(4)", desk);
     
-    //deskRoot.addChild(deskTransform);
+    deskRoot.addChild(deskTransform);
 
     deskRoot.addChild(deskBLLeg);
       deskBLLeg.addChild(deskBLLegTransform);
