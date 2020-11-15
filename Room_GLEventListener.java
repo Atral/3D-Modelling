@@ -70,7 +70,7 @@ public class Room_GLEventListener implements GLEventListener {
 
   private Camera camera;
   private Mat4 perspective;
-  private Model floor, cube, paper;
+  private Model floor, cube, paper, sphere, desk, notice;
   private Light light;
   private SGNode roomRoot, deskRoot, paperRoot;
   
@@ -82,28 +82,32 @@ public class Room_GLEventListener implements GLEventListener {
     int[] textureId3 = TextureLibrary.loadTexture(gl, "textures/container2_specular.jpg");
     int[] textureID4 = TextureLibrary.loadTexture(gl, "textures/Wood_021_basecolor.jpg");
     int[] textureId5 = TextureLibrary.loadTexture(gl, "textures/scribbles.jpg");
+    int[] textureId6 = TextureLibrary.loadTexture(gl, "textures/pens_basecolor.jpg");
     
     light = new Light(gl);
     light.setCamera(camera);
     
     Mesh mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
-    Material material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
+    Material material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 20.0f);
     Mat4 modelMatrix = Mat4Transform.scale(16,1f,16);
     floor = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId0);
 
     mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
-    shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
     modelMatrix = Mat4.multiply(Mat4Transform.scale(0,0,0), Mat4Transform.translate(0,0.5f,0));
     cube = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1);
-
-    Model desk = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID4);
+    desk = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID4);
+    notice = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId2, textureId3);
 
     mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
-    shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
-    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
+    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 1.0f);
     paper = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId5);
+
+    mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
+    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 80.0f);
+    sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh);
+
     
     roomRoot = new NameNode("room structure");
     
@@ -123,6 +127,13 @@ public class Room_GLEventListener implements GLEventListener {
     m = Mat4.multiply(m, Mat4Transform.translate(0,0.5f,-16));
     TransformNode backWallTransform = new TransformNode("scale(1.4f,3.9f,1.4f); translate(0,0.5,0)", m);
     ModelNode backWallShape = new ModelNode("Cube(1)", cube);
+
+    NameNode noticeBoard = new NameNode("Notice Board");
+    m = Mat4Transform.translate(0, -0.1f, 0.9f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.3f, 0.1f));
+    TransformNode noticeBoardTransform = new TransformNode("translate(0, 0, 0.26f);scale(8, 6, 1))", m);
+    ModelNode noticeBoardShape = new ModelNode("Notice(1)", notice);
+    
         
     roomRoot.addChild(floorNode);
       floorNode.addChild(floorTransform);
@@ -135,6 +146,10 @@ public class Room_GLEventListener implements GLEventListener {
       floorNode.addChild(backWall);
         backWall.addChild(backWallTransform);
           backWallTransform.addChild(backWallShape);
+
+          backWallTransform.addChild(noticeBoard);
+            noticeBoard.addChild(noticeBoardTransform);
+              noticeBoardTransform.addChild(noticeBoardShape);
 
     roomRoot.update();  // IMPORTANT – must be done every time any part of the scene graph changes
     // Following two lines can be used to check scene graph construction is correct
@@ -185,10 +200,16 @@ public class Room_GLEventListener implements GLEventListener {
     ModelNode deskFRLegShape = new ModelNode("Desk(4)", desk);
 
     NameNode deskPaper = new NameNode("Desk paper");
-    m = Mat4Transform.translate(0, legLength + surfaceY/2 + 0.021f, 0);
-    m = Mat4.multiply(m, Mat4Transform.scale(0.825f, 0.02f, 1.175f));
+    m = Mat4Transform.translate(0, legLength + surfaceY/2 + 0.05f, 0.5f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.825f, 0.05f, 1.175f));
     TransformNode deskPaperTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
     ModelNode deskPaperShape = new ModelNode("Paper(0)", paper);
+
+    NameNode deskPen = new NameNode("Desk pen");
+    m = Mat4Transform.translate(0.6f, legLength + surfaceY/2 + 0.015f, 0.5f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.02f, 0.02f, 0.5f));
+    TransformNode deskPenTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
+    ModelNode deskPenShape = new ModelNode("Sphere(0)", sphere);
 
     deskRoot.addChild(deskTransform);
 
@@ -199,6 +220,10 @@ public class Room_GLEventListener implements GLEventListener {
     deskTop.addChild(deskPaper);
       deskPaper.addChild(deskPaperTransform);
         deskPaperTransform.addChild(deskPaperShape);
+
+    deskTop.addChild(deskPen);
+      deskPen.addChild(deskPenTransform);
+        deskPenTransform.addChild(deskPenShape);
 
       deskTop.addChild(deskBLLeg);
         deskBLLeg.addChild(deskBLLegTransform);
@@ -220,7 +245,7 @@ public class Room_GLEventListener implements GLEventListener {
     //deskRoot.print(0, false);
 
     //*****************************************
-
+    /* NOTICE BOARD */
   }
  
   private void render(GL3 gl) {
