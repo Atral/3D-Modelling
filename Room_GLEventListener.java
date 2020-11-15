@@ -95,7 +95,7 @@ public class Room_GLEventListener implements GLEventListener {
     mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
-    modelMatrix = Mat4.multiply(Mat4Transform.scale(4,4,4), Mat4Transform.translate(0,0.5f,0));
+    modelMatrix = Mat4.multiply(Mat4Transform.scale(0,0,0), Mat4Transform.translate(0,0.5f,0));
     cube = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1);
 
     Model desk = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID4);
@@ -135,68 +135,70 @@ public class Room_GLEventListener implements GLEventListener {
     // Following two lines can be used to check scene graph construction is correct
     //twoBranchRoot.print(0, false);
     //System.exit(0);
-    float legHeight = 3;
+    
+    float legLength = 3;
     float legSide = 0.4f;
-    float legXSpacing = 14;
-    float legZSpacing = 7;
+    float surfaceX = 12;
+    float surfaceY = 0.2f;
+    float surfaceZ = 4;
 
     deskRoot = new NameNode("desk structure");
-    m = Mat4Transform.translate(0, 0, -5);
+    m = Mat4Transform.translate(0, 0, -16/2 + 0.25f + surfaceZ/2);
     TransformNode deskTransform = new TransformNode("translate(0, 0, -16)", m);
 
+    NameNode deskTop = new NameNode("Desk top surface");
+    m = Mat4Transform.translate(0, legLength, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(surfaceX, surfaceY, surfaceZ));
+    TransformNode deskTopTransform = new TransformNode("scale(24, 0.2f, 7); translate(0, 0.5f, 0)", m);
+    ModelNode deskTopShape = new ModelNode("Desk(0)", desk);
+
     NameNode deskBLLeg = new NameNode("Desk back left leg");
-    m = Mat4Transform.scale(legSide, legHeight, legSide);
-    m = Mat4.multiply(m, Mat4Transform.translate(-legXSpacing, 0.5f, 0));
+    m = Mat4Transform.translate(-surfaceX/2 + legSide/2, legLength/2, -surfaceZ/2 + legSide/2);
+    m = Mat4.multiply(m, Mat4Transform.scale(legSide, legLength, legSide));
     TransformNode deskBLLegTransform = new TransformNode("scale(0.4f, 3, 0.4f); translate(-15.6f, 0.5f, -16f)", m);
-    ModelNode deskBLLegShape = new ModelNode("Desk(0)", desk);
+    ModelNode deskBLLegShape = new ModelNode("Desk(1)", desk);
 
     NameNode deskBRLeg = new NameNode("Desk back right leg");
-    m = Mat4Transform.scale(legSide, legHeight, legSide);
-    m = Mat4.multiply(m, Mat4Transform.translate(legXSpacing, 0.5f, 0));
+    m = Mat4Transform.translate(surfaceX/2 - legSide/2, legLength/2, -surfaceZ/2 + legSide/2);
+    m = Mat4.multiply(m, Mat4Transform.scale(legSide, legLength, legSide));
     TransformNode deskBRLegTransform = new TransformNode("scale(0.4f, 3, 0.4f); translate(0, 0.5f, -16f)", m);
-    ModelNode deskBRLegShape = new ModelNode("Desk(1)", desk);
+    ModelNode deskBRLegShape = new ModelNode("Desk(2)", desk);
 
     NameNode deskFLLeg = new NameNode("Desk front left leg");
-    m = Mat4Transform.scale(legSide, legHeight, legSide);
-    m = Mat4.multiply(m, Mat4Transform.translate(-legXSpacing, 0.5f, legZSpacing));
+    m = Mat4Transform.translate(-surfaceX/2 + legSide/2, legLength/2, surfaceZ/2 - legSide/2);
+    m = Mat4.multiply(m, Mat4Transform.scale(legSide, legLength, legSide));
     TransformNode deskFLLegTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
-    ModelNode deskFLLegShape = new ModelNode("Desk(2)", desk);
+    ModelNode deskFLLegShape = new ModelNode("Desk(3)", desk);
 
     NameNode deskFRLeg = new NameNode("Desk front right leg");
-    m = Mat4Transform.scale(legSide, legHeight, legSide);
-    m = Mat4.multiply(m, Mat4Transform.translate(legXSpacing, 0.5f, legZSpacing));
+    m = Mat4Transform.translate(surfaceX/2 - legSide/2, legLength/2, surfaceZ/2 - legSide/2);
+    m = Mat4.multiply(m, Mat4Transform.scale(legSide, legLength, legSide));
     TransformNode deskFRLegTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
-    ModelNode deskFRLegShape = new ModelNode("Desk(3)", desk);
+    ModelNode deskFRLegShape = new ModelNode("Desk(4)", desk);
 
-    NameNode deskTop = new NameNode("Desk top surface");
-    m = Mat4Transform.scale(11.6f, 0.2f, 4);
-    m = Mat4.multiply(m, Mat4Transform.translate(0, 2*7.7f, 0.35f));
-    TransformNode deskTopTransform = new TransformNode("scale(24, 0.2f, 7); translate(0, 0.5f, 0)", m);
-    ModelNode deskTopShape = new ModelNode("Desk(4)", desk);
-    
     deskRoot.addChild(deskTransform);
 
-    deskRoot.addChild(deskBLLeg);
-      deskBLLeg.addChild(deskBLLegTransform);
-        deskBLLegTransform.addChild(deskBLLegShape);
+    deskTransform.addChild(deskTop);
+        deskTop.addChild(deskTopTransform);
+          deskTopTransform.addChild(deskTopShape);
 
-    deskRoot.addChild(deskBRLeg);
-      deskBRLeg.addChild(deskBRLegTransform);
-        deskBRLegTransform.addChild(deskBRLegShape);
+      deskTop.addChild(deskBLLeg);
+        deskBLLeg.addChild(deskBLLegTransform);
+          deskBLLegTransform.addChild(deskBLLegShape);
 
-    deskRoot.addChild(deskFLLeg);
-      deskFLLeg.addChild(deskFLLegTransform);
-        deskFLLegTransform.addChild(deskFLLegShape);
+      deskTop.addChild(deskBRLeg);
+        deskBRLeg.addChild(deskBRLegTransform);
+          deskBRLegTransform.addChild(deskBRLegShape);
 
-    deskRoot.addChild(deskFRLeg);
-      deskFRLeg.addChild(deskFRLegTransform);
-        deskFRLegTransform.addChild(deskFRLegShape);
+      deskTop.addChild(deskFLLeg);
+        deskFLLeg.addChild(deskFLLegTransform);
+          deskFLLegTransform.addChild(deskFLLegShape);
 
-    deskRoot.addChild(deskTop);
-      deskTop.addChild(deskTopTransform);
-        deskTopTransform.addChild(deskTopShape);
+      deskTop.addChild(deskFRLeg);
+        deskFRLeg.addChild(deskFRLegTransform);
+          deskFRLegTransform.addChild(deskFRLegShape);
 
-    deskRoot.update();
+      deskRoot.update();
     //deskRoot.print(0, false);
   }
  
