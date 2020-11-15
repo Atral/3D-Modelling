@@ -70,10 +70,9 @@ public class Room_GLEventListener implements GLEventListener {
 
   private Camera camera;
   private Mat4 perspective;
-  private Model floor, cube;
+  private Model floor, cube, paper;
   private Light light;
-  private SGNode roomRoot;
-  private SGNode deskRoot;
+  private SGNode roomRoot, deskRoot, paperRoot;
   
   private void initialise(GL3 gl) {
     createRandomNumbers();
@@ -82,6 +81,7 @@ public class Room_GLEventListener implements GLEventListener {
     int[] textureId2 = TextureLibrary.loadTexture(gl, "textures/container2.jpg");
     int[] textureId3 = TextureLibrary.loadTexture(gl, "textures/container2_specular.jpg");
     int[] textureID4 = TextureLibrary.loadTexture(gl, "textures/Wood_021_basecolor.jpg");
+    int[] textureId5 = TextureLibrary.loadTexture(gl, "textures/scribbles.jpg");
     
     light = new Light(gl);
     light.setCamera(camera);
@@ -99,6 +99,11 @@ public class Room_GLEventListener implements GLEventListener {
     cube = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1);
 
     Model desk = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID4);
+
+    mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
+    shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
+    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 32.0f);
+    paper = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId5);
     
     roomRoot = new NameNode("room structure");
     
@@ -136,9 +141,12 @@ public class Room_GLEventListener implements GLEventListener {
     //twoBranchRoot.print(0, false);
     //System.exit(0);
     
+
+    //******************************************************************************
+    //Desk
     float legLength = 3;
     float legSide = 0.4f;
-    float surfaceX = 12;
+    float surfaceX = 9;
     float surfaceY = 0.2f;
     float surfaceZ = 4;
 
@@ -176,11 +184,21 @@ public class Room_GLEventListener implements GLEventListener {
     TransformNode deskFRLegTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
     ModelNode deskFRLegShape = new ModelNode("Desk(4)", desk);
 
+    NameNode deskPaper = new NameNode("Desk paper");
+    m = Mat4Transform.translate(0, legLength + surfaceY/2 + 0.021f, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.825f, 0.02f, 1.175f));
+    TransformNode deskPaperTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
+    ModelNode deskPaperShape = new ModelNode("Paper(0)", paper);
+
     deskRoot.addChild(deskTransform);
 
     deskTransform.addChild(deskTop);
         deskTop.addChild(deskTopTransform);
           deskTopTransform.addChild(deskTopShape);
+
+    deskTop.addChild(deskPaper);
+      deskPaper.addChild(deskPaperTransform);
+        deskPaperTransform.addChild(deskPaperShape);
 
       deskTop.addChild(deskBLLeg);
         deskBLLeg.addChild(deskBLLegTransform);
@@ -200,6 +218,9 @@ public class Room_GLEventListener implements GLEventListener {
 
       deskRoot.update();
     //deskRoot.print(0, false);
+
+    //*****************************************
+
   }
  
   private void render(GL3 gl) {
