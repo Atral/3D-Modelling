@@ -82,7 +82,7 @@ public class Room_GLEventListener implements GLEventListener {
     int[] textureId3 = TextureLibrary.loadTexture(gl, "textures/container2_specular.jpg");
     int[] textureID4 = TextureLibrary.loadTexture(gl, "textures/Wood_021_basecolor.jpg");
     int[] textureId5 = TextureLibrary.loadTexture(gl, "textures/scribbles.jpg");
-    int[] textureId6 = TextureLibrary.loadTexture(gl, "textures/pens_basecolor.jpg");
+    int[] textureId6 = TextureLibrary.loadTexture(gl, "textures/noticeboard_color.jpg");
     
     light = new Light(gl);
     light.setCamera(camera);
@@ -98,10 +98,14 @@ public class Room_GLEventListener implements GLEventListener {
     modelMatrix = Mat4.multiply(Mat4Transform.scale(0,0,0), Mat4Transform.translate(0,0.5f,0));
     cube = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1);
     desk = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID4);
-    notice = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId2, textureId3);
+
+    material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 2.0f);
+    shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
+    notice = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId6);
 
     mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
-    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 1.0f);
+    shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
+    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 20.0f);
     paper = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId5);
 
     mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
@@ -129,7 +133,7 @@ public class Room_GLEventListener implements GLEventListener {
     ModelNode backWallShape = new ModelNode("Cube(1)", cube);
 
     NameNode noticeBoard = new NameNode("Notice Board");
-    m = Mat4Transform.translate(0, -0.1f, 0.9f);
+    m = Mat4Transform.translate(0, -0.1f, 0.8f);
     m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.3f, 0.1f));
     TransformNode noticeBoardTransform = new TransformNode("translate(0, 0, 0.26f);scale(8, 6, 1))", m);
     ModelNode noticeBoardShape = new ModelNode("Notice(1)", notice);
