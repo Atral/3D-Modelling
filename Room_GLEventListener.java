@@ -70,9 +70,9 @@ public class Room_GLEventListener implements GLEventListener {
 
   private Camera camera;
   private Mat4 perspective;
-  private Model floor, cube, paper, sphere, desk, notice;
+  private Model floor, cube, paper, sphere, desk, notice, wing;
   private Light light;
-  private SGNode roomRoot, deskRoot, paperRoot;
+  private SGNode roomRoot, deskRoot, paperRoot, heliRoot;
   
   private void initialise(GL3 gl) {
     createRandomNumbers();
@@ -111,6 +111,9 @@ public class Room_GLEventListener implements GLEventListener {
     mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
     material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 80.0f);
     sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh);
+
+    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 1.0f);
+    wing = new Model(gl, camera, light, shader, material, modelMatrix, mesh);
 
     
     roomRoot = new NameNode("room structure");
@@ -249,7 +252,52 @@ public class Room_GLEventListener implements GLEventListener {
     //deskRoot.print(0, false);
 
     //*****************************************
-    /* NOTICE BOARD */
+    /* HELICOPTER */
+    heliRoot = new NameNode("helicopter root");
+
+    NameNode heliBody = new NameNode("helicopter body");
+    m = Mat4Transform.translate(0, legLength + surfaceY/2 + 0.015f, 0.5f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.4f, 0.4f, 0.4f));
+    TransformNode heliBodyTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
+    ModelNode heliBodyShape = new ModelNode("Sphere(0)", sphere);
+
+    NameNode heliAxel = new NameNode("axel");
+    m = Mat4Transform.translate(0, legLength + surfaceY/2 + 0.015f + 0.25f, 0.5f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.2f, 0.2f, 0.2f));
+    TransformNode heliAxelTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
+    ModelNode heliAxelShape = new ModelNode("Sphere(1)", sphere);
+
+    NameNode heliLWing = new NameNode("left wing");
+    m = Mat4Transform.translate(-0.41f, legLength + surfaceY/2 + 0.1f, 0.5f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.04f, 0.04f));
+    TransformNode heliLWingTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
+    ModelNode heliLWingShape = new ModelNode("Wing(0)", wing);
+
+    NameNode heliRWing = new NameNode("right wing");
+    m = Mat4Transform.translate(0.41f, legLength + surfaceY/2 + 0.1f, 0.5f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.04f, 0.04f));
+    TransformNode heliRWingTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
+    ModelNode heliRWingShape = new ModelNode("Wing(1)", wing);
+
+    heliRoot.addChild(heliBody);
+      heliBody.addChild(heliBodyTransform);
+        heliBodyTransform.addChild(heliBodyShape);
+
+      heliBody.addChild(heliAxel);
+        heliAxel.addChild(heliAxelTransform);
+          heliAxelTransform.addChild(heliAxelShape);
+
+      heliAxel.addChild(heliLWing);
+        heliLWing.addChild(heliLWingTransform);
+          heliLWingTransform.addChild(heliLWingShape);
+
+      heliAxel.addChild(heliRWing);
+        heliRWing.addChild(heliRWingTransform);
+          heliRWingTransform.addChild(heliRWingShape);
+
+    heliRoot.update();
+
+
   }
  
   private void render(GL3 gl) {
@@ -258,6 +306,7 @@ public class Room_GLEventListener implements GLEventListener {
     light.render(gl);
     roomRoot.draw(gl);
     deskRoot.draw(gl);
+    heliRoot.draw(gl);
   }
   
   // The light's position is continually being changed, so needs to be calculated for each frame.
