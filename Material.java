@@ -13,6 +13,11 @@ public class Material {
   public static final Vec3 DEFAULT_DIFFUSE = new Vec3(0.8f, 0.8f, 0.8f);
   public static final Vec3 DEFAULT_SPECULAR = new Vec3(0.5f, 0.5f, 0.5f);
   public static final Vec3 DEFAULT_EMISSION = new Vec3(0.0f, 0.0f, 0.0f);
+  public static final Vec3 DEFAULT_ALBEDO = new Vec3(0.0f, 0.0f, 0.0f);
+  public static final Vec3 DEFAULT_NORMAL = new Vec3(0.0f, 0.0f, 0.0f);
+  public static final Vec3 DEFAULT_ROUGHNESS = new Vec3(0.0f, 0.0f, 0.0f);
+  public static final Vec3 DEFAULT_METALLIC = new Vec3(0.0f, 0.0f, 0.0f);
+  public static final Vec3 DEFAULT_AO = new Vec3(0.0f, 0.0f, 0.0f);
   public static final float DEFAULT_SHININESS = 32;
   
   private Vec3 ambient;
@@ -20,6 +25,11 @@ public class Material {
   private Vec3 specular;
   private Vec3 emission;
   private float shininess;
+  private int albedo;
+  private int normal;
+  private int metallic;
+  private int roughness;
+  private int ao;
   
   /**
    * Constructor. Sets attributes to default initial values.
@@ -42,10 +52,15 @@ public class Material {
    * @param  shininess   float value in the range 0.0..1.0.
    */  
    
-  public Material(Vec3 ambient, Vec3 diffuse, Vec3 specular, float shininess) {
+  public Material(Vec3 ambient, Vec3 diffuse, Vec3 specular, int albedo, int normal, int metallic, int roughness, int ao, float shininess) {
     this.ambient = ambient;
     this.diffuse = diffuse;
     this.specular = specular;
+    this.albedo = albedo;
+    this.normal = normal;
+    this.metallic = metallic;
+    this.roughness = roughness;
+    this.ao = ao;
     emission = new Vec3(DEFAULT_EMISSION);
     this.shininess = shininess;
   }
