@@ -83,6 +83,10 @@ public class Room_GLEventListener implements GLEventListener {
     int[] textureID4 = TextureLibrary.loadTexture(gl, "textures/Wood_021_basecolor.jpg");
     int[] textureId5 = TextureLibrary.loadTexture(gl, "textures/scribbles.jpg");
     int[] textureId6 = TextureLibrary.loadTexture(gl, "textures/noticeboard_color.jpg");
+    int[] textureID7 = TextureLibrary.loadTexture(gl, "textures/Wood_Ceiling_Coffers_001_basecolor.jpg");
+    int[] textureID8 = TextureLibrary.loadTexture(gl, "textures/Wood_Ceiling_Coffers_001_metallic.jpg");
+    int[] textureID9 = TextureLibrary.loadTexture(gl, "textures/Wood_Ceiling_Coffers_001_ambientOcclusion.jpg");
+    int[] textureId10 = TextureLibrary.loadTexture(gl, "textures/Wood_Ceiling_Coffers_001_normal.jpg");
     
     light = new Light(gl);
     light.setCamera(camera);
@@ -109,11 +113,12 @@ public class Room_GLEventListener implements GLEventListener {
     paper = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId5);
 
     mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
-    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 80.0f);
-    sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh);
+    shader = new Shader(gl, "vs_cube_04.txt", "fs_imp.txt");
+    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 4.0f);
+    sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID7, textureID8, textureID9, textureID8);
 
     material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 1.0f);
-    wing = new Model(gl, camera, light, shader, material, modelMatrix, mesh);
+    wing = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID4, textureID4);
 
     
     roomRoot = new NameNode("room structure");
@@ -254,46 +259,54 @@ public class Room_GLEventListener implements GLEventListener {
     //*****************************************
     /* HELICOPTER */
     heliRoot = new NameNode("helicopter root");
+    float r = 0.4f;
+    float off = 0.015f;
+    float axelR = 0.2f;
+
+    m = Mat4Transform.translate(3, r/2, -6);
+    TransformNode heliTransform = new TransformNode("Mat4Transform.translate(0, 5, 0);",m);
 
     NameNode heliBody = new NameNode("helicopter body");
-    m = Mat4Transform.translate(0, legLength + surfaceY/2 + 0.015f, 0.5f);
-    m = Mat4.multiply(m, Mat4Transform.scale(0.4f, 0.4f, 0.4f));
+    m = Mat4Transform.translate(0, legLength + surfaceY/2 + off, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(r, r, r));
     TransformNode heliBodyTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
     ModelNode heliBodyShape = new ModelNode("Sphere(0)", sphere);
 
     NameNode heliAxel = new NameNode("axel");
-    m = Mat4Transform.translate(0, legLength + surfaceY/2 + 0.015f + 0.25f, 0.5f);
-    m = Mat4.multiply(m, Mat4Transform.scale(0.2f, 0.2f, 0.2f));
+    m = Mat4Transform.translate(0, legLength + surfaceY/2 + off + 0.25f, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(axelR, axelR, axelR));
     TransformNode heliAxelTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
     ModelNode heliAxelShape = new ModelNode("Sphere(1)", sphere);
 
     NameNode heliLWing = new NameNode("left wing");
-    m = Mat4Transform.translate(-0.41f, legLength + surfaceY/2 + 0.1f, 0.5f);
-    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.04f, 0.04f));
+    m = Mat4Transform.translate(-r/2 - 0.1f, legLength + surfaceY/2 + r/2 + 0.05f, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.02f, 0.08f));
     TransformNode heliLWingTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
     ModelNode heliLWingShape = new ModelNode("Wing(0)", wing);
 
     NameNode heliRWing = new NameNode("right wing");
-    m = Mat4Transform.translate(0.41f, legLength + surfaceY/2 + 0.1f, 0.5f);
-    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.04f, 0.04f));
+    m = Mat4Transform.translate(r/2 + 0.1f, legLength + surfaceY/2 + r/2 + 0.05f, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.02f, 0.08f));
     TransformNode heliRWingTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
     ModelNode heliRWingShape = new ModelNode("Wing(1)", wing);
 
-    heliRoot.addChild(heliBody);
-      heliBody.addChild(heliBodyTransform);
-        heliBodyTransform.addChild(heliBodyShape);
+    heliRoot.addChild(heliTransform);
 
-      heliBody.addChild(heliAxel);
-        heliAxel.addChild(heliAxelTransform);
-          heliAxelTransform.addChild(heliAxelShape);
+      heliTransform.addChild(heliBody);
+        heliBody.addChild(heliBodyTransform);
+          heliBodyTransform.addChild(heliBodyShape);
 
-      heliAxel.addChild(heliLWing);
-        heliLWing.addChild(heliLWingTransform);
-          heliLWingTransform.addChild(heliLWingShape);
+        heliBody.addChild(heliAxel);
+          heliAxel.addChild(heliAxelTransform);
+            heliAxelTransform.addChild(heliAxelShape);
 
-      heliAxel.addChild(heliRWing);
-        heliRWing.addChild(heliRWingTransform);
-          heliRWingTransform.addChild(heliRWingShape);
+        heliAxel.addChild(heliLWing);
+          heliLWing.addChild(heliLWingTransform);
+            heliLWingTransform.addChild(heliLWingShape);
+
+        heliAxel.addChild(heliRWing);
+          heliRWing.addChild(heliRWingTransform);
+            heliRWingTransform.addChild(heliRWingShape);
 
     heliRoot.update();
 

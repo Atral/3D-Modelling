@@ -7,14 +7,17 @@ public class Model {
   
   private Mesh mesh;
   private int[] textureId1; 
-  private int[] textureId2; 
+  private int[] textureId2;
+  private int[] textureId3; 
+  private int[] textureId4;
+  private int[] textureId5;
   private Material material;
   private Shader shader;
   private Mat4 modelMatrix;
   private Camera camera;
   private Light light;
   
-  public Model(GL3 gl, Camera camera, Light light, Shader shader, Material material, Mat4 modelMatrix, Mesh mesh, int[] textureId1, int[] textureId2) {
+  public Model(GL3 gl, Camera camera, Light light, Shader shader, Material material, Mat4 modelMatrix, Mesh mesh, int[] textureId1, int[] textureId2, int[] textureId3, int[] textureId4, int[] textureId5) {
     this.mesh = mesh;
     this.material = material;
     this.modelMatrix = modelMatrix;
@@ -23,14 +26,29 @@ public class Model {
     this.light = light;
     this.textureId1 = textureId1;
     this.textureId2 = textureId2;
+    this.textureId3 = textureId3;
+    this.textureId4 = textureId4;
+    this.textureId5 = textureId5;
+  }
+
+  public Model(GL3 gl, Camera camera, Light light, Shader shader, Material material, Mat4 modelMatrix, Mesh mesh, int[] textureId1, int[] textureId2, int[] textureId3, int[] textureId4) {
+    this(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, textureId2, textureId3, textureId4, null);
+  }
+
+  public Model(GL3 gl, Camera camera, Light light, Shader shader, Material material, Mat4 modelMatrix, Mesh mesh, int[] textureId1, int[] textureId2, int[] textureId3) {
+    this(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, textureId2, textureId3, null);
+  }
+
+  public Model(GL3 gl, Camera camera, Light light, Shader shader, Material material, Mat4 modelMatrix, Mesh mesh, int[] textureId1, int[] textureId2) {
+    this(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, textureId2, null, null);
   }
   
   public Model(GL3 gl, Camera camera, Light light, Shader shader, Material material, Mat4 modelMatrix, Mesh mesh, int[] textureId1) {
-    this(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, null);
+    this(gl, camera, light, shader, material, modelMatrix, mesh, textureId1, null, null, null);
   }
   
   public Model(GL3 gl, Camera camera, Light light, Shader shader, Material material, Mat4 modelMatrix, Mesh mesh) {
-    this(gl, camera, light, shader, material, modelMatrix, mesh, null, null);
+    this(gl, camera, light, shader, material, modelMatrix, mesh, null, null, null, null);
   }
   
   public void setModelMatrix(Mat4 m) {
@@ -73,6 +91,24 @@ public class Model {
       gl.glActiveTexture(GL.GL_TEXTURE1);
       gl.glBindTexture(GL.GL_TEXTURE_2D, textureId2[0]);
     }
+
+    if (textureId3!=null) {
+      shader.setInt(gl, "third_texture", 2);
+      gl.glActiveTexture(GL.GL_TEXTURE2);
+      gl.glBindTexture(GL.GL_TEXTURE_2D, textureId3[0]);
+    }
+
+    if (textureId4!=null) {
+      shader.setInt(gl, "fourth_texture", 3);
+      gl.glActiveTexture(GL.GL_TEXTURE3);
+      gl.glBindTexture(GL.GL_TEXTURE_2D, textureId4[0]);
+    }
+
+    if (textureId5!=null) {
+      shader.setInt(gl, "fifth_texture", 4);
+      gl.glActiveTexture(GL.GL_TEXTURE4);
+      gl.glBindTexture(GL.GL_TEXTURE_2D, textureId4[0]);
+    }
     mesh.render(gl);
   } 
   
@@ -84,6 +120,9 @@ public class Model {
     mesh.dispose(gl);
     if (textureId1!=null) gl.glDeleteBuffers(1, textureId1, 0);
     if (textureId2!=null) gl.glDeleteBuffers(1, textureId2, 0);
+    if (textureId3!=null) gl.glDeleteBuffers(1, textureId3, 0);
+    if (textureId4!=null) gl.glDeleteBuffers(1, textureId4, 0);
+    if (textureId5!=null) gl.glDeleteBuffers(1, textureId5, 0);
   }
   
 }
