@@ -1,4 +1,4 @@
- import gmaths.*;
+import gmaths.*;
 
  /**
  * This class stores the Material properties for a Mesh
@@ -13,11 +13,11 @@ public class Material {
   public static final Vec3 DEFAULT_DIFFUSE = new Vec3(0.8f, 0.8f, 0.8f);
   public static final Vec3 DEFAULT_SPECULAR = new Vec3(0.5f, 0.5f, 0.5f);
   public static final Vec3 DEFAULT_EMISSION = new Vec3(0.0f, 0.0f, 0.0f);
-  public static final Vec3 DEFAULT_ALBEDO = new Vec3(1.0f, 1.0f, 1.0f);
-  public static final Vec3 NORMAL = new Vec3(0.0f, 0.0f, 0.0f);
-  public static final float DEFAULT_ROUGHNESS = 0;
-  public static final float DEFAULT_METALLIC = 0;
-  public static final float DEFAULT_AO = 2;
+  public static final Vec3 DEFAULT_ALBEDO = new Vec3(0.0f, 0.0f, 0.0f);
+  public static final Vec3 DEFAULT_NORMAL = new Vec3(0.0f, 0.0f, 0.0f);
+  public static final Vec3 DEFAULT_ROUGHNESS = new Vec3(0.0f, 0.0f, 0.0f);
+  public static final Vec3 DEFAULT_METALLIC = new Vec3(0.0f, 0.0f, 0.0f);
+  public static final Vec3 DEFAULT_AO = new Vec3(0.0f, 0.0f, 0.0f);
   public static final float DEFAULT_SHININESS = 32;
   
   private Vec3 ambient;
@@ -25,11 +25,11 @@ public class Material {
   private Vec3 specular;
   private Vec3 emission;
   private float shininess;
-  private Vec3 albedo;
-  private Vec3 normal;
-  private float metallic;
-  private float roughness;
-  private float ao;
+  private int albedo;
+  private int normal;
+  private int metallic;
+  private int roughness;
+  private int ao;
   
   /**
    * Constructor. Sets attributes to default initial values.
@@ -52,7 +52,7 @@ public class Material {
    * @param  shininess   float value in the range 0.0..1.0.
    */  
    
-  public Material(Vec3 ambient, Vec3 diffuse, Vec3 specular, float albedo, Vec3 normal, float metallic, float roughness, float ao, float shininess) {
+  public Material(Vec3 ambient, Vec3 diffuse, Vec3 specular, int albedo, int normal, int metallic, int roughness, int ao, float shininess) {
     this.ambient = ambient;
     this.diffuse = diffuse;
     this.specular = specular;
@@ -192,55 +192,6 @@ public class Material {
   public Vec3 getEmission() {
     return new Vec3(emission);
   }
-
-  public void setAlbedo(float red, float green, float blue) {
-    albedo.x = red;
-    albedo.y = green;
-    albedo.z = blue;
-  }
-
-  public void setAlbedo(Vec3 rgb){
-    setAlbedo(rgb.x, rgb.y, rgb.z);
-  }
-
-  public void getAlbedo(){
-    return new Vec3(albedo);
-  }
-
-  public void setMetallic(float metal){
-    setMetallic(metal);
-  }
-
-  public void getMetallic(){
-    return metallic;
-  }
-
-  public void setRoughness(float rough){
-    setMetallic(rough);
-  }
-
-  public void getRoughness(){
-    return roughness;
-  }
-
-  public void setAo(float ambOcc){
-    setAo(ambOcc);
-  }
-
-  public void getAo(){
-    return ao;
-  }
-
-  public void setNormal(float red, float green, float blue) {
-    normal.x = red;
-    normal.y = green;
-    normal.z = blue;
-  }
-
-  public void setNormal(Vec3 rgb){
-    setNormal(rgb.x, rgb.y, rgb.z);
-  }
-
     
   /**
    * Sets the shininess value (as used in Phong local reflection model)
