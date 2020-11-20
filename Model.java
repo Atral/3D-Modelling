@@ -7,13 +7,7 @@ public class Model {
   
   private Mesh mesh;
   private int[] textureId1; 
-  private int[] textureId2;
-  private int[] texutreId3;
-  private int[] textureId4;
-  private int[] textureId5;
-  private int[] textureId6;
-  private int[] textureId7;
-  
+  private int[] textureId2; 
   private Material material;
   private Shader shader;
   private Mat4 modelMatrix;

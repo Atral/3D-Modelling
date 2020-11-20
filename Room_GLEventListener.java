@@ -83,14 +83,12 @@ public class Room_GLEventListener implements GLEventListener {
     int[] textureID4 = TextureLibrary.loadTexture(gl, "textures/Wood_021_basecolor.jpg");
     int[] textureId5 = TextureLibrary.loadTexture(gl, "textures/scribbles.jpg");
     int[] textureId6 = TextureLibrary.loadTexture(gl, "textures/noticeboard_color.jpg");
-    int[] textureID7 = TextureLibrary.loadTexture(gl, "textures/Sci-fi_Floor_001_basecolor.jpg");
-    int[] textureID8 = TextureLibrary.loadTexture(gl, "textures/Sci-fi_Floor_001_specular.jpg");
     
     light = new Light(gl);
     light.setCamera(camera);
     
     Mesh mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
-    Shader shader = new Shader(gl, "vs_pbr.txt", "fs_pbr.txt");
+    Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     Material material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 20.0f);
     Mat4 modelMatrix = Mat4Transform.scale(16,1f,16);
     floor = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId0);
@@ -111,11 +109,11 @@ public class Room_GLEventListener implements GLEventListener {
     paper = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId5);
 
     mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
-    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 40.0f);
-    sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID7, textureID8);
+    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 80.0f);
+    sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh);
 
     material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 1.0f);
-    wing = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID7);
+    wing = new Model(gl, camera, light, shader, material, modelMatrix, mesh);
 
     
     roomRoot = new NameNode("room structure");
@@ -256,7 +254,6 @@ public class Room_GLEventListener implements GLEventListener {
     //*****************************************
     /* HELICOPTER */
     heliRoot = new NameNode("helicopter root");
-    
 
     NameNode heliBody = new NameNode("helicopter body");
     m = Mat4Transform.translate(0, legLength + surfaceY/2 + 0.015f, 0.5f);
@@ -271,14 +268,14 @@ public class Room_GLEventListener implements GLEventListener {
     ModelNode heliAxelShape = new ModelNode("Sphere(1)", sphere);
 
     NameNode heliLWing = new NameNode("left wing");
-    m = Mat4Transform.translate(-0.3f, legLength + surfaceY/2 + 0.15f + 0.125f, 0.5f);
-    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.04f, 0.1f));
+    m = Mat4Transform.translate(-0.41f, legLength + surfaceY/2 + 0.1f, 0.5f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.04f, 0.04f));
     TransformNode heliLWingTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
     ModelNode heliLWingShape = new ModelNode("Wing(0)", wing);
 
     NameNode heliRWing = new NameNode("right wing");
-    m = Mat4Transform.translate(0.3f, legLength + surfaceY/2 + 0.15f + 0.125f, 0.5f);
-    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.04f, 0.1f));
+    m = Mat4Transform.translate(0.41f, legLength + surfaceY/2 + 0.1f, 0.5f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.04f, 0.04f));
     TransformNode heliRWingTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
     ModelNode heliRWingShape = new ModelNode("Wing(1)", wing);
 
