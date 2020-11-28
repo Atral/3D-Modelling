@@ -58,6 +58,7 @@ public class Room_GLEventListener implements GLEventListener {
   public void dispose(GLAutoDrawable drawable) {
     GL3 gl = drawable.getGL().getGL3();
     light.dispose(gl);
+    light2.dispose(gl);
     floor.dispose(gl);
     cube.dispose(gl);
   }
@@ -72,6 +73,7 @@ public class Room_GLEventListener implements GLEventListener {
   private Mat4 perspective;
   private Model floor, cube, paper, sphere, desk, notice, wing, axel;
   private Light light;
+  private Light light2;
   private SGNode roomRoot, deskRoot, paperRoot, heliRoot;
   
   private void initialise(GL3 gl) {
@@ -97,36 +99,43 @@ public class Room_GLEventListener implements GLEventListener {
     
     light = new Light(gl);
     light.setCamera(camera);
+    light.setColor(0.2f, 0.2f, 0.5f);
+    light.setIntensity(1);
+    light2 = new Light(gl);
+    light2.setCamera(camera);
+    light2.setPosition(2, 3.2f, -7);
+    light2.setColor(0.3f, 0f, 0.5f);
+    light2.setIntensity(1);
     
     Mesh mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     Material material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 20.0f);
     Mat4 modelMatrix = Mat4Transform.scale(16,1f,16);
-    floor = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId0);
+    floor = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId0);
 
     mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
     modelMatrix = Mat4.multiply(Mat4Transform.scale(0,0,0), Mat4Transform.translate(0,0.5f,0));
-    cube = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1);
-    desk = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID4);
+    cube = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId1);
+    desk = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureID4);
 
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 2.0f);
     shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
-    notice = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId6);
+    notice = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId6);
 
     mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 20.0f);
-    paper = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId5);
+    paper = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId5);
 
     shader = new Shader(gl, "vs_cube_04.txt", "fs_ao_mm.txt");
     mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
     material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 50.0f);
-    sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId7, textureId8, textureId9);
-    axel = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId12, textureId13, textureId14);
+    sphere = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId7, textureId8, textureId9);
+    axel = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId12, textureId13, textureId14);
 
     material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 1.0f);
-    wing = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId12, textureId13, textureId14);
+    wing = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId12, textureId13, textureId14);
     
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     
@@ -321,6 +330,7 @@ public class Room_GLEventListener implements GLEventListener {
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
     light.setPosition(getLightPosition());  // changing light position each frame
     light.render(gl);
+    light2.render(gl);
     roomRoot.draw(gl);
     deskRoot.draw(gl);
     heliRoot.draw(gl);
