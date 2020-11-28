@@ -1,7 +1,11 @@
 import gmaths.*;
 import java.awt.*;
 import java.awt.event.*;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
@@ -32,6 +36,30 @@ public class Room extends JFrame {
     canvas.addMouseMotionListener(new MyMouseInput(camera));
     canvas.addKeyListener(new MyKeyboardInput(camera));
     getContentPane().add(canvas, BorderLayout.CENTER);
+
+    JButton heliUp = new JButton("Start Rotors");
+    JButton heliDown = new JButton("Stop Rotors");
+
+    JButton light1On = new JButton("Light 1 ON");
+    JButton light1Off = new JButton("Light 1 OFF");
+    
+    JButton light2On = new JButton("Light 2 ON");
+    JButton light2Off = new JButton("Light 2 OFF");
+
+    JButton lampPose = new JButton("Random Lamp Pose");
+
+    JPanel buttons = new JPanel();
+    buttons.add(heliUp);
+    buttons.add(heliDown);
+    buttons.add(light1On);
+    buttons.add(light1Off);
+    buttons.add(light2On);
+    buttons.add(light2Off);
+    buttons.add(lampPose);
+
+    getContentPane().add(buttons, BorderLayout.PAGE_END);
+
+
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         animator.stop();

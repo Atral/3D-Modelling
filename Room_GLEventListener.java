@@ -58,6 +58,7 @@ public class Room_GLEventListener implements GLEventListener {
   public void dispose(GLAutoDrawable drawable) {
     GL3 gl = drawable.getGL().getGL3();
     light.dispose(gl);
+    light2.dispose(gl);
     floor.dispose(gl);
     cube.dispose(gl);
   }
@@ -70,8 +71,9 @@ public class Room_GLEventListener implements GLEventListener {
 
   private Camera camera;
   private Mat4 perspective;
-  private Model floor, cube, paper, sphere, desk, notice, wing;
+  private Model floor, cube, paper, sphere, desk, notice, wing, axel;
   private Light light;
+  private Light light2;
   private SGNode roomRoot, deskRoot, paperRoot, heliRoot;
   
   private void initialise(GL3 gl) {
@@ -83,43 +85,59 @@ public class Room_GLEventListener implements GLEventListener {
     int[] textureID4 = TextureLibrary.loadTexture(gl, "textures/Wood_021_basecolor.jpg");
     int[] textureId5 = TextureLibrary.loadTexture(gl, "textures/scribbles.jpg");
     int[] textureId6 = TextureLibrary.loadTexture(gl, "textures/noticeboard_color.jpg");
-    int[] textureID7 = TextureLibrary.loadTexture(gl, "textures/Wood_Ceiling_Coffers_001_basecolor.jpg");
-    int[] textureID8 = TextureLibrary.loadTexture(gl, "textures/Wood_Ceiling_Coffers_001_metallic.jpg");
-    int[] textureID9 = TextureLibrary.loadTexture(gl, "textures/Wood_Ceiling_Coffers_001_ambientOcclusion.jpg");
-    int[] textureId10 = TextureLibrary.loadTexture(gl, "textures/Wood_Ceiling_Coffers_001_normal.jpg");
+    int[] textureId7 = TextureLibrary.loadTexture(gl, "textures/Brick_Wall_018_basecolor.jpg");
+    int[] textureId8 = TextureLibrary.loadTexture(gl, "textures/Brick_Wall_018_specular.jpg");
+    int[] textureId9 = TextureLibrary.loadTexture(gl, "textures/Brick_Wall_018_ambientOcclusion.jpg");
+    int[] textureId10 = TextureLibrary.loadTexture(gl, "textures/jade.jpg");
+    int[] textureId11 = TextureLibrary.loadTexture(gl, "textures/jade_specular.jpg");
+    int[] textureId12 = TextureLibrary.loadTexture(gl, "textures/Wood_021_basecolor.jpg");
+    int[] textureId13 = TextureLibrary.loadTexture(gl, "textures/Wood_021_height.png");
+    int[] textureId14 = TextureLibrary.loadTexture(gl, "textures/Wood_ambientOcclusion.jpg");
+    
+
+
     
     light = new Light(gl);
     light.setCamera(camera);
+    light.setColor(0.2f, 0.2f, 0.5f);
+    light.setIntensity(1);
+    light2 = new Light(gl);
+    light2.setCamera(camera);
+    light2.setPosition(2, 3.2f, -7);
+    light2.setColor(0.3f, 0f, 0.5f);
+    light2.setIntensity(1);
     
     Mesh mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     Material material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 20.0f);
     Mat4 modelMatrix = Mat4Transform.scale(16,1f,16);
-    floor = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId0);
+    floor = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId0);
 
     mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 32.0f);
     modelMatrix = Mat4.multiply(Mat4Transform.scale(0,0,0), Mat4Transform.translate(0,0.5f,0));
-    cube = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId1);
-    desk = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID4);
+    cube = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId1);
+    desk = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureID4);
 
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 2.0f);
     shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
-    notice = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId6);
+    notice = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId6);
 
     mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 20.0f);
-    paper = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureId5);
+    paper = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId5);
 
+    shader = new Shader(gl, "vs_cube_04.txt", "fs_ao_mm.txt");
     mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
-    shader = new Shader(gl, "vs_cube_04.txt", "fs_imp.txt");
-    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 4.0f);
-    sphere = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID7, textureID8, textureID9, textureID8);
+    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 50.0f);
+    sphere = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId7, textureId8, textureId9);
+    axel = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId12, textureId13, textureId14);
 
     material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 1.0f);
-    wing = new Model(gl, camera, light, shader, material, modelMatrix, mesh, textureID4, textureID4);
-
+    wing = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId12, textureId13, textureId14);
+    
+    shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     
     roomRoot = new NameNode("room structure");
     
@@ -259,54 +277,49 @@ public class Room_GLEventListener implements GLEventListener {
     //*****************************************
     /* HELICOPTER */
     heliRoot = new NameNode("helicopter root");
-    float r = 0.4f;
-    float off = 0.015f;
-    float axelR = 0.2f;
-
-    m = Mat4Transform.translate(3, r/2, -6);
-    TransformNode heliTransform = new TransformNode("Mat4Transform.translate(0, 5, 0);",m);
+    m = Mat4Transform.translate(3, 0.2f, -6);
+    TransformNode heliRootTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
 
     NameNode heliBody = new NameNode("helicopter body");
-    m = Mat4Transform.translate(0, legLength + surfaceY/2 + off, 0);
-    m = Mat4.multiply(m, Mat4Transform.scale(r, r, r));
+    m = Mat4Transform.translate(0, legLength + surfaceY/2 + 0.015f, 0.5f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.4f, 0.4f, 0.4f));
     TransformNode heliBodyTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
     ModelNode heliBodyShape = new ModelNode("Sphere(0)", sphere);
 
     NameNode heliAxel = new NameNode("axel");
-    m = Mat4Transform.translate(0, legLength + surfaceY/2 + off + 0.25f, 0);
-    m = Mat4.multiply(m, Mat4Transform.scale(axelR, axelR, axelR));
+    m = Mat4Transform.translate(0, legLength + surfaceY/2 + 0.015f + 0.25f, 0.5f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.2f, 0.2f, 0.2f));
     TransformNode heliAxelTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
-    ModelNode heliAxelShape = new ModelNode("Sphere(1)", sphere);
+    ModelNode heliAxelShape = new ModelNode("Axel(0)", axel);
 
     NameNode heliLWing = new NameNode("left wing");
-    m = Mat4Transform.translate(-r/2 - 0.1f, legLength + surfaceY/2 + r/2 + 0.05f, 0);
-    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.02f, 0.08f));
+    m = Mat4Transform.translate(-0.41f +0.1f, legLength + surfaceY/2 + 0.3f, 0.5f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.02f, 0.04f));
     TransformNode heliLWingTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
     ModelNode heliLWingShape = new ModelNode("Wing(0)", wing);
 
     NameNode heliRWing = new NameNode("right wing");
-    m = Mat4Transform.translate(r/2 + 0.1f, legLength + surfaceY/2 + r/2 + 0.05f, 0);
-    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.02f, 0.08f));
+    m = Mat4Transform.translate(0.41f - 0.1f, legLength + surfaceY/2 + 0.3f, 0.5f);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.02f, 0.04f));
     TransformNode heliRWingTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
     ModelNode heliRWingShape = new ModelNode("Wing(1)", wing);
 
-    heliRoot.addChild(heliTransform);
+    heliRoot.addChild(heliRootTransform);
+    heliRootTransform.addChild(heliBody);
+      heliBody.addChild(heliBodyTransform);
+        heliBodyTransform.addChild(heliBodyShape);
 
-      heliTransform.addChild(heliBody);
-        heliBody.addChild(heliBodyTransform);
-          heliBodyTransform.addChild(heliBodyShape);
+      heliBody.addChild(heliAxel);
+        heliAxel.addChild(heliAxelTransform);
+          heliAxelTransform.addChild(heliAxelShape);
 
-        heliBody.addChild(heliAxel);
-          heliAxel.addChild(heliAxelTransform);
-            heliAxelTransform.addChild(heliAxelShape);
+      heliAxel.addChild(heliLWing);
+        heliLWing.addChild(heliLWingTransform);
+          heliLWingTransform.addChild(heliLWingShape);
 
-        heliAxel.addChild(heliLWing);
-          heliLWing.addChild(heliLWingTransform);
-            heliLWingTransform.addChild(heliLWingShape);
-
-        heliAxel.addChild(heliRWing);
-          heliRWing.addChild(heliRWingTransform);
-            heliRWingTransform.addChild(heliRWingShape);
+      heliAxel.addChild(heliRWing);
+        heliRWing.addChild(heliRWingTransform);
+          heliRWingTransform.addChild(heliRWingShape);
 
     heliRoot.update();
 
@@ -317,6 +330,7 @@ public class Room_GLEventListener implements GLEventListener {
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
     light.setPosition(getLightPosition());  // changing light position each frame
     light.render(gl);
+    light2.render(gl);
     roomRoot.draw(gl);
     deskRoot.draw(gl);
     heliRoot.draw(gl);
