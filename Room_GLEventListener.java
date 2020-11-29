@@ -99,13 +99,14 @@ public class Room_GLEventListener implements GLEventListener {
     
     light = new Light(gl);
     light.setCamera(camera);
-    light.setColor(0.2f, 0.2f, 0.5f);
-    light.setIntensity(1);
+    light.setColor(0f, 0.5f, 0);
+    light.setIntensity(0.3f);
+
     light2 = new Light(gl);
     light2.setCamera(camera);
     light2.setPosition(2, 3.2f, -7);
-    light2.setColor(0.3f, 0f, 0.5f);
-    light2.setIntensity(1);
+    light2.setColor(0f, 0f, 0.5f);
+    light2.setIntensity(0.3f);
     
     Mesh mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
@@ -120,7 +121,7 @@ public class Room_GLEventListener implements GLEventListener {
     desk = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureID4);
 
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 2.0f);
-    shader = new Shader(gl, "vs_tt_05.txt", "fs_tt_05.txt");
+    shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     notice = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId6);
 
     mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());

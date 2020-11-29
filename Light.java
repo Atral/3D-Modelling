@@ -2,6 +2,8 @@ import gmaths.*;
 import java.nio.*;
 import com.jogamp.common.nio.*;
 import com.jogamp.opengl.*;
+import java.util.ArrayList;
+import java.util.Collections;
   
 public class Light {
   
@@ -10,6 +12,9 @@ public class Light {
   private Mat4 model;
   private Shader shader;
   private Camera camera;
+  private float r;
+  private float g;
+  private float b;
     
   public Light(GL3 gl) {
     material = new Material();
@@ -50,6 +55,10 @@ public class Light {
     material.setAmbient(r, g, b);
     material.setDiffuse(r, g, b);
     material.setSpecular(r, g, b);
+
+    this.r = r;
+    this.g = g;
+    this.b = b;
   }
 
   public void setIntensity(float i){
