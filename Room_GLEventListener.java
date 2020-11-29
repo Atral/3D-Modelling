@@ -94,19 +94,16 @@ public class Room_GLEventListener implements GLEventListener {
     int[] textureId13 = TextureLibrary.loadTexture(gl, "textures/Wood_021_height.png");
     int[] textureId14 = TextureLibrary.loadTexture(gl, "textures/Wood_ambientOcclusion.jpg");
     
-
-
-    
     light = new Light(gl);
     light.setCamera(camera);
-    light.setColor(0f, 0.5f, 0);
-    light.setIntensity(0.3f);
+    light.setColor(0.8f, 0f, 0);
+    light.setIntensity(0.5f);
 
     light2 = new Light(gl);
     light2.setCamera(camera);
     light2.setPosition(2, 3.2f, -7);
-    light2.setColor(0f, 0f, 0.5f);
-    light2.setIntensity(0.3f);
+    light2.setColor(0f, 0.5f, 0f);
+    light2.setIntensity(0.5f);
     
     Mesh mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
