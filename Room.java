@@ -17,7 +17,8 @@ public class Room extends JFrame {
   private static final Dimension dimension = new Dimension(WIDTH, HEIGHT);
   private GLCanvas canvas;
   private GLEventListener glEventListener;
-  private final FPSAnimator animator; 
+  private final FPSAnimator animator;
+  private boolean spinning = false;
 
   public static void main(String[] args) {
     Room b1 = new Room("Room");
@@ -37,14 +38,58 @@ public class Room extends JFrame {
     canvas.addKeyListener(new MyKeyboardInput(camera));
     getContentPane().add(canvas, BorderLayout.CENTER);
 
+    
     JButton heliUp = new JButton("Start Rotors");
+    heliUp.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        while(spinning){
+          Room_GLEventListener.rotate();
+        }
+          
+      }
+    });
     JButton heliDown = new JButton("Stop Rotors");
 
     JButton light1On = new JButton("Light 1 ON");
+
+    light1On.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+          Room_GLEventListener.light1On();
+      }
+    });
+
     JButton light1Off = new JButton("Light 1 OFF");
+
+    light1Off.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+          Room_GLEventListener.light1Off();
+      }
+    });
     
     JButton light2On = new JButton("Light 2 ON");
+
+    light2On.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+          Room_GLEventListener.light2On();
+      }
+    });
     JButton light2Off = new JButton("Light 2 OFF");
+
+    light2Off.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+          Room_GLEventListener.light2Off();
+      }
+    });
 
     JButton lampPose = new JButton("Random Lamp Pose");
 

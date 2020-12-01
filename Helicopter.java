@@ -1,6 +1,39 @@
-private final class Helicopter {
+import gmaths.*;
+import java.awt.*;
+import java.awt.event.*;
 
-    private Model  sphere, wing, axel;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.util.FPSAnimator;
+
+public class Helicopter implements GLEventListener{
+
+   /* Initialisation */
+   public void init(GLAutoDrawable drawable) {   
+    GL3 gl = drawable.getGL().getGL3();
+    System.err.println("Chosen GLCapabilities: " + drawable.getChosenGLCapabilities());
+    gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
+    gl.glClearDepth(1.0f);
+    gl.glEnable(GL.GL_DEPTH_TEST);
+    gl.glDepthFunc(GL.GL_LESS);
+    gl.glFrontFace(GL.GL_CCW);    // default is 'CCW'
+    gl.glEnable(GL.GL_CULL_FACE); // default is 'not enabled'
+    gl.glCullFace(GL.GL_BACK);   // default is 'back', assuming CCW
+    initialise(gl);
+  }
+
+  private void initialise(GL3 gl) {
+
+    Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_ao_mm.txt");
+    Mesh mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
+    Material material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 50.0f);
+
+    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 1.0f);
+    wing = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId12, textureId13, textureId14);
 
     heliRoot = new NameNode("helicopter root");
     m = Mat4Transform.translate(3, 0.2f, -6);
@@ -49,5 +82,6 @@ private final class Helicopter {
 
     heliRoot.update();
 
-    return model();
+    return heliRoot;
+  }
 }

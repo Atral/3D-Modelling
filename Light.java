@@ -12,9 +12,7 @@ public class Light {
   private Mat4 model;
   private Shader shader;
   private Camera camera;
-  private float r;
-  private float g;
-  private float b;
+  Vec3 rgb;
     
   public Light(GL3 gl) {
     material = new Material();
@@ -51,16 +49,26 @@ public class Light {
     return material;
   }
 
-  public void setColor(float r, float g, float b){
-    material.setAmbient(r, g, b);
-    material.setDiffuse(r, g, b);
-    material.setSpecular(r, g, b);
-
-    this.r = r;
-    this.g = g;
-    this.b = b;
+  public void setColor(Vec3 rgb){
+    material.setAmbient(rgb);
+    material.setDiffuse(rgb);
+    material.setSpecular(rgb);
+    this.rgb = new Vec3(rgb);
   }
 
+  public Vec3 getColor(){
+    return this.rgb;
+    
+  }
+
+  public void hideModel(){
+    model = new Mat4(0);
+  }
+
+  public void unhideModel(){
+    model = new Mat4(1);
+  }
+  
   public void setIntensity(float i){
     material.setAmbient(Vec3.multiply(material.getAmbient(), i));
     material.setDiffuse(Vec3.multiply(material.getDiffuse(), i));
@@ -72,7 +80,7 @@ public class Light {
   }
   
   public void render(GL3 gl) {
-    Mat4 model = new Mat4(1);
+    Mat4 model = this.model;
     model = Mat4.multiply(Mat4Transform.scale(0.3f,0.3f,0.3f), model);
     model = Mat4.multiply(Mat4Transform.translate(position), model);
     
