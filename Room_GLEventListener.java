@@ -340,6 +340,7 @@ public class Room_GLEventListener implements GLEventListener {
     NameNode heliRWing = new NameNode("right wing");
     m = Mat4Transform.translate(0.41f - 0.1f, legLength + surfaceY / 2 + 0.3f, 0.5f);
     m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.02f, 0.04f));
+    m = Mat4.multiply(Mat4Transform.rotateAroundY(rotate()), m);
     TransformNode heliRWingTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)",
         m);
     ModelNode heliRWingShape = new ModelNode("Wing(1)", wing);
@@ -362,7 +363,7 @@ public class Room_GLEventListener implements GLEventListener {
           heliRWingTransform.addChild(heliRWingShape);
 
     heliRoot.update();
-
+ 
   }
 
   private void render(GL3 gl) {
@@ -386,8 +387,10 @@ public class Room_GLEventListener implements GLEventListener {
     // return new Vec3(5f,3.4f,5f);
   }
 
-  public static void rotate() {
-    rotation += 30;
+  public float rotate() {
+    double elapsedTime = getSeconds() - startTime;
+    rotation = (float) (10 * elapsedTime);
+    heliRoot.update();
   }
   
   // ***************************************************

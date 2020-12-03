@@ -1,6 +1,7 @@
 import gmaths.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -26,18 +27,22 @@ public class Helicopter implements GLEventListener{
     initialise(gl);
   }
 
-  private void initialise(GL3 gl) {
+  private NameNode initialise(GL3 gl) {
 
+  /*  List<Object> heliRootParams = new ArrayList<Object>();
+    List<Object> heliBodyParams = new ArrayList<Object>();
+    List<Object> heliAxelParams = new ArrayList<Object>();
+    List<Object> lWingParams = new ArrayList<Object>();
+    List<Object> rWingParams = new ArrayList<Object>(); */
     Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_ao_mm.txt");
     Mesh mesh = new Mesh(gl, Sphere.vertices.clone(), Sphere.indices.clone());
-    Material material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 50.0f);
+    Material material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f),
+        new Vec3(0.3f, 0.3f, 0.3f), 50.0f);
 
-    material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.3f, 0.3f, 0.3f), 1.0f);
-    wing = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId12, textureId13, textureId14);
-
-    heliRoot = new NameNode("helicopter root");
-    m = Mat4Transform.translate(3, 0.2f, -6);
+    NameNode heliRoot = new NameNode("helicopter root");
+    Mat4 m = Mat4Transform.translate(3, 0.2f, -6);
     TransformNode heliRootTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)", m);
+    
 
     NameNode heliBody = new NameNode("helicopter body");
     m = Mat4Transform.translate(0, legLength + surfaceY/2 + 0.015f, 0.5f);
