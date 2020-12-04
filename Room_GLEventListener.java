@@ -9,12 +9,14 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.*;
 import com.jogamp.opengl.util.awt.*;
 import com.jogamp.opengl.util.glsl.*;
-  
+
+
 public class Room_GLEventListener implements GLEventListener {
   
   private static float INTENSITY1 = 0.5f;
   private static float INTENSITY2 = 0.5f;
   private static final boolean DISPLAY_SHADERS = false;
+  
     
   public Room_GLEventListener(Camera camera) {
     this.camera = camera;
@@ -50,8 +52,6 @@ public class Room_GLEventListener implements GLEventListener {
     camera.setPerspectiveMatrix(Mat4Transform.perspective(45, aspect));
   }
 
-  
-
   public static void light1Off(){
     light.setIntensity(0);
     light.hideModel();
@@ -72,6 +72,11 @@ public class Room_GLEventListener implements GLEventListener {
     light2.setColor(light2.getColor());
     light2.setIntensity(INTENSITY2);
     light2.unhideModel();
+  }
+
+  public static void spinning(boolean s){
+    spinning = s;
+    rotorStopwatch.start();
   }
 
   /* Draw */
@@ -102,6 +107,8 @@ public class Room_GLEventListener implements GLEventListener {
   private static Light light2;
   private SGNode roomRoot, deskRoot, paperRoot, heliRoot;
   public static float rotation = 0;
+  public static boolean spinning = false;
+  private static StopWatch rotorStopwatch;
 
   private void initialise(GL3 gl) {
     createRandomNumbers();
@@ -310,8 +317,22 @@ public class Room_GLEventListener implements GLEventListener {
 
     // *****************************************
     /* HELICOPTER */
+    
+ 
+  }
+
+  private void render(GL3 gl) {
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+    light.setPosition(getLightPosition()); // changing light position each frame
+    light.render(gl);
+    light2.render(gl);
+    roomRoot.draw(gl);
+    deskRoot.draw(gl);
+
+    float legLength = 3;
+    float surfaceY = 0.2f;
     heliRoot = new NameNode("helicopter root");
-    m = Mat4Transform.translate(3, 0.2f, -6);
+    Mat4 m = Mat4Transform.translate(3, flyHeli(spinning), -6);
     TransformNode heliRootTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)",
         m);
 
@@ -326,7 +347,7 @@ public class Room_GLEventListener implements GLEventListener {
     m = Mat4Transform.translate(0, legLength + surfaceY / 2 + 0.015f + 0.25f, 0.5f);
     m = Mat4.multiply(m, Mat4Transform.scale(0.2f, 0.2f, 0.2f));
     TransformNode heliAxelTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)",
-        m);
+        rotate(m, spinning));
     ModelNode heliAxelShape = new ModelNode("Axel(0)", axel);
 
     NameNode heliLWing = new NameNode("left wing");
@@ -361,16 +382,6 @@ public class Room_GLEventListener implements GLEventListener {
               heliRWingTransform.addChild(heliRWingShape);
 
     heliRoot.update();
- 
-  }
-
-  private void render(GL3 gl) {
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-    light.setPosition(getLightPosition()); // changing light position each frame
-    light.render(gl);
-    light2.render(gl);
-    roomRoot.draw(gl);
-    deskRoot.draw(gl);
     heliRoot.draw(gl);
   }
 
@@ -385,17 +396,36 @@ public class Room_GLEventListener implements GLEventListener {
     // return new Vec3(5f,3.4f,5f);
   }
 
-  /*public float rotate() {
+  public Mat4 rotate(Mat4 m, boolean spinning) {
+    double elapsedTime = rotorStopwatch.elapsed();
+    rotation = (float) (500 * elapsedTime);
+    if(!spinning){
+      return Mat4.multiply(m, Mat4Transform.rotateAroundY(rotation));
+    }
+    else{
+      rotorStopwatch.pause();
+      return m;
+    }
+  }
+
+  public float flyHeli(boolean spinning){
     double elapsedTime = getSeconds() - startTime;
-    rotation = (float) (10 * elapsedTime);
-    heliRoot.update();
-  }*/
+    float height = (float)(elapsedTime/20);
+    if(spinning){
+      return (0.2f + height);
+    }else{
+      spinStop = startTime + height;
+      return 0.2f;
+    }
+  }
   
   // ***************************************************
   /* TIME
    */ 
   
   private double startTime;
+  private double spinStart;
+  private double spinStop;
   
   private double getSeconds() {
     return System.currentTimeMillis()/1000.0;

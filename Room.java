@@ -44,13 +44,19 @@ public class Room extends JFrame {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        /*while(spinning){
-          Room_GLEventListener.rotate();
-        }*/
+        Room_GLEventListener.spinning(true);
           
       }
     });
     JButton heliDown = new JButton("Stop Rotors");
+    heliDown.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        Room_GLEventListener.spinning(false);
+          
+      }
+    });
 
     JButton light1On = new JButton("Light 1 ON");
 
