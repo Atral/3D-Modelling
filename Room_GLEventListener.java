@@ -325,22 +325,20 @@ public class Room_GLEventListener implements GLEventListener {
     NameNode heliAxel = new NameNode("axel");
     m = Mat4Transform.translate(0, legLength + surfaceY / 2 + 0.015f + 0.25f, 0.5f);
     m = Mat4.multiply(m, Mat4Transform.scale(0.2f, 0.2f, 0.2f));
-    m = Mat4.multiply(m, Mat4Transform.rotateAroundZ(rotation));
     TransformNode heliAxelTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)",
         m);
     ModelNode heliAxelShape = new ModelNode("Axel(0)", axel);
 
     NameNode heliLWing = new NameNode("left wing");
-    m = Mat4Transform.translate(-0.1f - 0.25f, 0, 0);
-    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.02f, 0.04f));
+    m = Mat4Transform.translate(-0.1f*5 - 0.25f*5, 0, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.5f*5, 0.02f*5, 0.04f*5));
     TransformNode heliLWingTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)",
         m);
     ModelNode heliLWingShape = new ModelNode("Wing(0)", wing);
 
     NameNode heliRWing = new NameNode("right wing");
-    m = Mat4Transform.translate(0.41f - 0.1f, legLength + surfaceY / 2 + 0.3f, 0.5f);
-    m = Mat4.multiply(m, Mat4Transform.scale(0.5f, 0.02f, 0.04f));
-    m = Mat4.multiply(Mat4Transform.rotateAroundY(rotate()), m);
+   m = Mat4Transform.translate(0.1f*5 + 0.25f*5, 0, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.5f*5, 0.02f*5, 0.04f*5));
     TransformNode heliRWingTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)",
         m);
     ModelNode heliRWingShape = new ModelNode("Wing(1)", wing);
@@ -354,13 +352,13 @@ public class Room_GLEventListener implements GLEventListener {
         heliAxel.addChild(heliAxelTransform);
           heliAxelTransform.addChild(heliAxelShape);
 
-       heliAxelTransform.addChild(heliLWing);
-        heliLWing.addChild(heliLWingTransform);
-          heliLWingTransform.addChild(heliLWingShape);
+          heliAxelTransform.addChild(heliLWing);
+            heliLWing.addChild(heliLWingTransform);
+              heliLWingTransform.addChild(heliLWingShape);
 
-      heliAxel.addChild(heliRWing);
-        heliRWing.addChild(heliRWingTransform);
-          heliRWingTransform.addChild(heliRWingShape);
+          heliAxelTransform.addChild(heliRWing);
+            heliRWing.addChild(heliRWingTransform);
+              heliRWingTransform.addChild(heliRWingShape);
 
     heliRoot.update();
  
@@ -387,11 +385,11 @@ public class Room_GLEventListener implements GLEventListener {
     // return new Vec3(5f,3.4f,5f);
   }
 
-  public float rotate() {
+  /*public float rotate() {
     double elapsedTime = getSeconds() - startTime;
     rotation = (float) (10 * elapsedTime);
     heliRoot.update();
-  }
+  }*/
   
   // ***************************************************
   /* TIME

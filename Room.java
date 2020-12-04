@@ -44,9 +44,9 @@ public class Room extends JFrame {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        while(spinning){
+        /*while(spinning){
           Room_GLEventListener.rotate();
-        }
+        }*/
           
       }
     });
