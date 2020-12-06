@@ -413,23 +413,30 @@ public class Room_GLEventListener implements GLEventListener {
     NameNode lampLowerArm = new NameNode("lamp body");
     m = Mat4Transform.translate(0, 0.4f/BASE_YS + 0.5f, 0);
     m = Mat4.multiply(m, Mat4Transform.scale(lowerArmXS/BASE_XS, lowerArmYS/BASE_YS, lowerArmZS/BASE_ZS));
-    //m = Mat4.multiply(m, Mat4Transform.rotateAroundZ(10));
+    Mat4 r = Mat4Transform.rotateAroundZ(40);
     TransformNode lampLowerArmTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)",
         m);
+    TransformNode lampLowerArmRotation = new TransformNode("", r);
     ModelNode lampLowerArmShape = new ModelNode("Sphere(0)", lampSphere);
 
     float jointS = 0.2f;
     NameNode lampJoint = new NameNode("lamp joint");
-    m = Mat4Transform.translate(0, lowerArmYS/2, 0);
+    m = Mat4Transform.translate(0, lowerArmYS/2 + BASE_YS, 0);
     m = Mat4.multiply(m, Mat4Transform.scale(jointS/lowerArmXS, jointS/lowerArmYS, jointS/lowerArmZS));
     TransformNode lampJointTransform = new TransformNode("",m);
     ModelNode lampJointShape = new ModelNode("Sphere(0)", lampSphere);
 
     NameNode lampUpperArm = new NameNode("upper arm");
     m = Mat4Transform.translate(0, 1, 0);
-    m = Mat4.multiply(m, Mat4Transform.scale(1,1, 1));
+    m = Mat4.multiply(m, Mat4Transform.scale(1 ,1, 1));
     TransformNode lampUpperArmTransform = new TransformNode("", m);
     ModelNode lampUpperArmShape = new ModelNode("", lampSphere);
+
+    NameNode lampHead = new NameNode("head");
+    m = Mat4Transform.translate(0, 1.5f, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(4, lowerArmYS/3, 2));
+    TransformNode lampHeadTransform = new TransformNode("", m);
+    ModelNode lampHeadShape = new ModelNode("", lampSquare);
 
     lampRoot.addChild(lampRootTransform);
 
@@ -438,7 +445,8 @@ public class Room_GLEventListener implements GLEventListener {
           lampBaseTransform.addChild(lampBaseShape);
           lampBaseTransform.addChild(lampLowerArm);
             lampLowerArm.addChild(lampLowerArmTransform);
-              lampLowerArmTransform.addChild(lampLowerArmShape);
+            lampLowerArmTransform.addChild(lampLowerArmRotation);
+              lampLowerArmRotation.addChild(lampLowerArmShape);
 
               lampLowerArmTransform.addChild(lampJoint);
                 lampJoint.addChild(lampJointTransform);
@@ -447,6 +455,10 @@ public class Room_GLEventListener implements GLEventListener {
                   lampJoint.addChild(lampUpperArm);
                     lampUpperArm.addChild(lampUpperArmTransform);
                       lampUpperArmTransform.addChild(lampUpperArmShape);
+
+                    lampUpperArm.addChild(lampHead);
+                      lampHead.addChild(lampHeadTransform);
+                        lampHeadTransform.addChild(lampHeadShape);
                 
 
     lampRoot.update();
