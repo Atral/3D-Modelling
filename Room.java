@@ -37,7 +37,6 @@ public class Room extends JFrame {
     canvas.addMouseMotionListener(new MyMouseInput(camera));
     canvas.addKeyListener(new MyKeyboardInput(camera));
     getContentPane().add(canvas, BorderLayout.CENTER);
-
     
     JButton heliUp = new JButton("Start Rotors");
     heliUp.addActionListener(new ActionListener() {
@@ -45,7 +44,6 @@ public class Room extends JFrame {
       @Override
       public void actionPerformed(ActionEvent e) {
         Room_GLEventListener.spinning(true);
-          
       }
     });
     JButton heliDown = new JButton("Stop Rotors");

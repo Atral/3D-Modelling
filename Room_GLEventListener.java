@@ -76,7 +76,6 @@ public class Room_GLEventListener implements GLEventListener {
 
   public static void spinning(boolean s){
     spinning = s;
-    rotorStopwatch.start();
   }
 
   /* Draw */
@@ -102,17 +101,18 @@ public class Room_GLEventListener implements GLEventListener {
 
   private Camera camera;
   private Mat4 perspective;
-  private Model floor, cube, paper, sphere, desk, notice, wing, axel;
+  private Model floor, cube, paper, sphere, desk, notice, wing, axel, lampSquare, lampSphere;
   private static Light light;
   private static Light light2;
   private SGNode roomRoot, deskRoot, paperRoot, heliRoot;
   public static float rotation = 0;
   public static boolean spinning = false;
-  private static StopWatch rotorStopwatch;
+  private double pauseStart = 0;
+  private double pauseEnd = 0;
 
   private void initialise(GL3 gl) {
     createRandomNumbers();
-    int[] textureId0 = TextureLibrary.loadTexture(gl, "textures/Wood_Floor_007_COLOR.jpg");
+    int[] textureId0 = TextureLibrary.loadTexture(gl, "textures/tileable_wood_planks_texture.jpg");
     int[] textureId1 = TextureLibrary.loadTexture(gl, "textures/Stylized_Wall_001_BaseColor.jpg");
     int[] textureId2 = TextureLibrary.loadTexture(gl, "textures/container2.jpg");
     int[] textureId3 = TextureLibrary.loadTexture(gl, "textures/container2_specular.jpg");
@@ -127,6 +127,7 @@ public class Room_GLEventListener implements GLEventListener {
     int[] textureId12 = TextureLibrary.loadTexture(gl, "textures/Wood_021_basecolor.jpg");
     int[] textureId13 = TextureLibrary.loadTexture(gl, "textures/Wood_021_height.png");
     int[] textureId14 = TextureLibrary.loadTexture(gl, "textures/Wood_ambientOcclusion.jpg");
+    int[] floorSpec = TextureLibrary.loadTexture(gl, "textures/tileable_wood_planks_texture_SPECULAR.jpg"); 
 
     light = new Light(gl);
     light.setCamera(camera);
@@ -142,20 +143,21 @@ public class Room_GLEventListener implements GLEventListener {
     Mesh mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     Shader shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
     Material material = new Material(new Vec3(0.0f, 0.5f, 0.81f), new Vec3(0.0f, 0.5f, 0.81f),
-        new Vec3(0.3f, 0.3f, 0.3f), 20.0f);
+        new Vec3(0.3f, 0.3f, 0.3f), 10.0f);
     Mat4 modelMatrix = Mat4Transform.scale(16, 1f, 16);
-    floor = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId0);
+    floor = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId0, floorSpec);
 
     mesh = new Mesh(gl, Cube.vertices.clone(), Cube.indices.clone());
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f),
         32.0f);
     modelMatrix = Mat4.multiply(Mat4Transform.scale(0, 0, 0), Mat4Transform.translate(0, 0.5f, 0));
-    cube = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId1);
+    cube = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId1, textureId1);
     desk = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureID4);
+    lampSquare = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId10, textureId11);
 
     material = new Material(new Vec3(1.0f, 0.5f, 0.31f), new Vec3(1.0f, 0.5f, 0.31f), new Vec3(0.5f, 0.5f, 0.5f), 2.0f);
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
-    notice = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId6);
+    notice = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId6, null);
 
     mesh = new Mesh(gl, TwoTriangles.vertices.clone(), TwoTriangles.indices.clone());
     shader = new Shader(gl, "vs_cube_04.txt", "fs_cube_04.txt");
@@ -169,6 +171,7 @@ public class Room_GLEventListener implements GLEventListener {
         50.0f);
     sphere = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId7, textureId8,
         textureId9);
+    lampSphere = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId10, textureId11);
     axel = new Model(gl, camera, light, light2, shader, material, modelMatrix, mesh, textureId12, textureId13,
         textureId14);
 
@@ -383,6 +386,71 @@ public class Room_GLEventListener implements GLEventListener {
 
     heliRoot.update();
     heliRoot.draw(gl);
+
+    // *************************************************************************
+    /* LAMP */
+    
+    final float BASE_XS = 0.6f;
+    final float BASE_YS = 0.1f;
+    final float BASE_ZS = 0.4f;
+    
+    NameNode lampRoot = new NameNode("lamp root");
+    m = Mat4Transform.translate(-2f, legLength + surfaceY/2 + BASE_YS/2, -6);
+    TransformNode lampRootTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)",
+        m);
+
+    NameNode lampBase = new NameNode("lamp body");
+    m = Mat4Transform.translate(0, 0, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(0.6f, BASE_YS, 0.4f));
+    TransformNode lampBaseTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)",
+        m);
+    ModelNode lampBaseShape = new ModelNode("Sphere(0)", lampSquare);
+
+    float lowerArmXS = 0.1f;
+    float lowerArmYT = 0.4f;
+    float lowerArmYS = 0.8f;
+    float lowerArmZS =  0.1f;
+    NameNode lampLowerArm = new NameNode("lamp body");
+    m = Mat4Transform.translate(0, 0.4f/BASE_YS + 0.5f, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(lowerArmXS/BASE_XS, lowerArmYS/BASE_YS, lowerArmZS/BASE_ZS));
+    //m = Mat4.multiply(m, Mat4Transform.rotateAroundZ(10));
+    TransformNode lampLowerArmTransform = new TransformNode("scale(0.4f, 3, 0.4f); Mat4Transform.translate(-14, 0.5f, 7)",
+        m);
+    ModelNode lampLowerArmShape = new ModelNode("Sphere(0)", lampSphere);
+
+    float jointS = 0.2f;
+    NameNode lampJoint = new NameNode("lamp joint");
+    m = Mat4Transform.translate(0, lowerArmYS/2, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(jointS/lowerArmXS, jointS/lowerArmYS, jointS/lowerArmZS));
+    TransformNode lampJointTransform = new TransformNode("",m);
+    ModelNode lampJointShape = new ModelNode("Sphere(0)", lampSphere);
+
+    NameNode lampUpperArm = new NameNode("upper arm");
+    m = Mat4Transform.translate(0, 0, 0);
+    m = Mat4Transform.scale(lowerArmXS/jointS, lowerArmYS/jointS, lowerArmZS/jointS);
+    TransformNode lampUpperArmTransform = new TransformNode("", m);
+    ModelNode lampUpperArmShape = new ModelNode("", lampSphere);
+
+    lampRoot.addChild(lampRootTransform);
+
+      lampRootTransform.addChild(lampBase);
+        lampBase.addChild(lampBaseTransform);
+          lampBaseTransform.addChild(lampBaseShape);
+          lampBaseTransform.addChild(lampLowerArm);
+            lampLowerArm.addChild(lampLowerArmTransform);
+              lampLowerArmTransform.addChild(lampLowerArmShape);
+
+              lampLowerArmTransform.addChild(lampJoint);
+                lampJoint.addChild(lampJointTransform);
+                  lampJointTransform.addChild(lampJointShape);
+
+                  lampJoint.addChild(lampUpperArm);
+                    lampUpperArm.addChild(lampUpperArmTransform);
+                      lampUpperArmTransform.addChild(lampUpperArmShape);
+                
+
+    lampRoot.update();
+    lampRoot.draw(gl);
   }
 
   // The light's position is continually being changed, so needs to be calculated
@@ -397,14 +465,14 @@ public class Room_GLEventListener implements GLEventListener {
   }
 
   public Mat4 rotate(Mat4 m, boolean spinning) {
-    double elapsedTime = rotorStopwatch.elapsed();
-    rotation = (float) (500 * elapsedTime);
-    if(!spinning){
+    if(spinning){
+      pauseStart = getSeconds() - startTime;
+      double elapsedTime = getSeconds() - startTime;
+      rotation = (float) (500 * elapsedTime);
       return Mat4.multiply(m, Mat4Transform.rotateAroundY(rotation));
-    }
-    else{
-      rotorStopwatch.pause();
-      return m;
+    }else{
+      rotation = (float)(500 * pauseStart);
+      return Mat4.multiply(m, Mat4Transform.rotateAroundY(rotation));
     }
   }
 
@@ -414,8 +482,13 @@ public class Room_GLEventListener implements GLEventListener {
     if(spinning){
       return (0.2f + height);
     }else{
-      spinStop = startTime + height;
-      return 0.2f;
+      double pauseTime = elapsedTime - pauseStart;
+      float fallPos = 0.2f + (float)(pauseStart/20) - ((float)pauseTime*0.1f*9.8f*9.8f);
+      if(fallPos > 0.2f){
+        return fallPos;
+      }else{
+        return 0.2f;
+      }
     }
   }
   
