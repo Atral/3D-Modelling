@@ -426,8 +426,8 @@ public class Room_GLEventListener implements GLEventListener {
     ModelNode lampJointShape = new ModelNode("Sphere(0)", lampSphere);
 
     NameNode lampUpperArm = new NameNode("upper arm");
-    m = Mat4Transform.translate(0, 0, 0);
-    m = Mat4Transform.scale(lowerArmXS/jointS, lowerArmYS/jointS, lowerArmZS/jointS);
+    m = Mat4Transform.translate(0, 1, 0);
+    m = Mat4.multiply(m, Mat4Transform.scale(1,1, 1));
     TransformNode lampUpperArmTransform = new TransformNode("", m);
     ModelNode lampUpperArmShape = new ModelNode("", lampSphere);
 
