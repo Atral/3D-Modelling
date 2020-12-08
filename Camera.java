@@ -2,6 +2,8 @@ import gmaths.*;
 import java.awt.event.*;
 import com.jogamp.opengl.awt.GLCanvas;
 
+/* This class is taken from Ch7 of the exercise code by Dr Steve Maddock */
+
 public class Camera {
   
   public enum CameraType {X, Z};
@@ -48,6 +50,10 @@ public class Camera {
   
   public Vec3 getPosition() {
     return new Vec3(position);
+  }
+
+  public Vec3 getTarget() {
+    return new Vec3(target);
   }
   
   public void setPosition(Vec3 p) {

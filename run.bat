@@ -1,2 +1,2 @@
-javac Room.java
-java Room
+javac Anilamp.java
+java Anilamp

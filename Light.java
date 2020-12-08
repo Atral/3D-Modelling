@@ -4,6 +4,13 @@ import com.jogamp.common.nio.*;
 import com.jogamp.opengl.*;
 import java.util.ArrayList;
 import java.util.Collections;
+
+/* This code is adapted from Light.java in Ch7 of the exercise code by 
+Dr Steve Maddock. I have added methods to turn the light on and off
+and change the colour / intensity */
+
+/* I declare that this code is my own work except for where stated */
+/* Author <Jack Maskell> <jmaskell2@sheffield> */
   
 public class Light {
   

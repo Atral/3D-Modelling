@@ -5,6 +5,8 @@ import java.nio.file.Paths;
 import java.nio.charset.Charset;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.glsl.*;  
+
+/* This class is taken from Ch7 of the exercise code by Dr Steve Maddock */
   
 public class Shader {
   

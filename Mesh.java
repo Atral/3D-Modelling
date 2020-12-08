@@ -3,6 +3,8 @@ import java.nio.*;
 import com.jogamp.common.nio.*;
 import com.jogamp.opengl.*;
 
+/* This class is taken from Ch7 of the exercise code by Dr Steve Maddock */
+
 public class Mesh {
   
   private float[] vertices;

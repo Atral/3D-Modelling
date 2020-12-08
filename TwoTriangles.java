@@ -1,3 +1,5 @@
+/* This class is taken from Ch7 of the exercise code by Dr Steve Maddock */
+
 public final class TwoTriangles {
   
   // ***************************************************

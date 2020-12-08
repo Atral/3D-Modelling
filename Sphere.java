@@ -4,6 +4,8 @@ public final class Sphere {
   /* THE DATA
    */
   // anticlockwise/counterclockwise ordering
+
+  /* This class is taken from Ch7 of the exercise code by Dr Steve Maddock */
  
   private static final int XLONG = 30;
   private static final int YLAT = 30;
